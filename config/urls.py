@@ -4,7 +4,7 @@ from django.contrib import admin
 from django.urls import include, path
 from django.views import defaults as default_views
 from django.views.generic import TemplateView
-from rest_framework.authtoken.views import obtain_auth_token
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 urlpatterns = [
                   path("", TemplateView.as_view(template_name="pages/home.html"), name="home"),
@@ -14,18 +14,20 @@ urlpatterns = [
                   # Django Admin, use {% url 'admin:index' %}
                   path(settings.ADMIN_URL, admin.site.urls),
                   # User management
-                  path("users/", include("myproject.users.urls", namespace="users")),
-                  path("accounts/", include("allauth.urls")),
+                  path("api/users/", include("myproject.users.urls", namespace="users")),
+                  path("api/accounts/", include("allauth.urls")),
+                  path("api/api-token-auth", TokenObtainPairView),
+                  path("api/api-token-refresh", TokenRefreshView),
                   # Your stuff: custom urls includes go here
               ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
-# API URLS
-urlpatterns += [
-    # API base url
-    path("api/", include("config.api_router")),
-    # DRF auth token
-    path("auth-token/", obtain_auth_token),
-]
+# # API URLS
+# urlpatterns += [
+#     # API base url
+#     path("api/", include("config.api_router")),
+#     # DRF auth token
+#     path("auth-token/", obtain_auth_token),
+# ]
 
 if settings.DEBUG:
     # This allows the error pages to be debugged during development, just visit
